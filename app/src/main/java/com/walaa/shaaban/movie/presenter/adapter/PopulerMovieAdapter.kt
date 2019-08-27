@@ -2,26 +2,27 @@ package com.walaa.shaaban.movie.presenter.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.walaa.shaaban.movie.DetailsMovieActivity
 import com.walaa.shaaban.movie.R
 import com.walaa.shaaban.movie.data.model.PopularMovieModel
 import com.walaa.shaaban.movie.data.utils.ApiUtils
+import com.walaa.shaaban.movie.data.utils.Common
+
+
+
 
 class PopulerMovieAdapter(var getPopularMovies : PopularMovieModel, context:Context) :RecyclerView.Adapter<PopulerMovieAdapter.ViewHolderMovieopular>() {
 
     private lateinit var mGetPopularMovies : PopularMovieModel
     private lateinit var mContext: Context
     init {
-     mGetPopularMovies = getPopularMovies
+        mGetPopularMovies = getPopularMovies
         mContext = context
 
     }
@@ -40,21 +41,16 @@ class PopulerMovieAdapter(var getPopularMovies : PopularMovieModel, context:Cont
     override fun onBindViewHolder(holder: ViewHolderMovieopular, position: Int) {
 
         var popularMovies = getPopularMovies.movies.get(position)
-        holder.movieTiltle.text = popularMovies.title.toString()
-        holder.movieData.text = popularMovies.releaseDate.toString()
-
-        Glide
-            .with(mContext)
-            .load("${ApiUtils.POSTER_BASE_URL}${popularMovies.posterPath}")
-            .centerCrop()
-            .placeholder(R.drawable.ic_launcher_background)
-            .into(holder.movieImg)
-
-        holder.movieImg.setOnClickListener(View.OnClickListener {
-            var intent:Intent = Intent(mContext, DetailsMovieActivity::class.java)
+        holder.movieTiltle.text = popularMovies.title
+        holder.movieData.text = popularMovies.releaseDate
+        Common.getImageView(mContext, holder.movieImg, "${ApiUtils.POSTER_BASE_URL}${popularMovies.posterPath}")
+        holder.movieImg.setOnClickListener {
+            val intent = Intent(mContext, DetailsMovieActivity::class.java)
             intent.putExtra("id", popularMovies.id)
-            mContext.startActivity(intent)
-        })
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+            it.context.applicationContext.startActivity(intent)
+        }
+
     }
 
 
